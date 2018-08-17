@@ -12,6 +12,7 @@ VCC | VCC
 GND | GND
 ENVELOPE | pin analogowy (w przykładowym kodzie: A1)
 pozostałe | niepodłączone
+
 [![Schemat-podlaczenia](https://cdn.sparkfun.com/assets/learn_tutorials/4/9/2/Exp_16_Sound_Detector_bb_2.png)](https://learn.sparkfun.com/tutorials/sik-experiment-guide-for-the-arduino-101genuino-101-board/experiment-15-using-the-sound-detector-board)
 
 [Kompletny hook-up-guide na stronie Sparkfun](https://learn.sparkfun.com/tutorials/sound-detector-hookup-guide)

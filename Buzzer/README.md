@@ -8,6 +8,7 @@ Na co zwrócić uwagę?
 - PWM (ang. *pulse with modulation*) omawiam przy okazji LED Bar'a i sterowania jasnością świecenia diod
 
 Wyprowadzenia na płytce głośniczka są od spodu opisane. 
+
 Buzzer | Arduino 
 ---: | :---
 SIG | 9 *(lub inny pin ~digital)*

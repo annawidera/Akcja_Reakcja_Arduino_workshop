@@ -1,6 +1,4 @@
-# TEDxKatowice 2017: Zrób to sam. ✂️📐
-### Warsztaty Arduino DIY: Akcja⤳Reakcja!
-###### Katowice, 12.08.2017
+# Warsztaty Arduino DIY: Akcja⤳Reakcja! ✂️📐
 
 ### Plan działania 
 1. wybieracie element wejścia 🕹️ i element wyjścia 📺, 

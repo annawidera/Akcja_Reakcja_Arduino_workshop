@@ -9,12 +9,12 @@ Na co zwrócić uwagę?
 
 Wyprowadzenia na płytce głośniczka są od spodu opisane. 
 
-Buzzer | Arduino 
----: | :---
-SIG | 9 *(lub inny pin ~digital)*
-NC | (ang. *not connected*), pozostaje niepodłączony
-VCC | VCC
-GND | GND
+| Buzzer | Arduino |
+| ---: | :--- |
+| SIG | 9 *(lub inny pin ~digital)* |
+| NC | (ang. *not connected*), pozostaje niepodłączony |
+| VCC | VCC |
+| GND | GND |
 
 ## Tablica piosenek
 Stworzyłam strukturę do opisywania poszczególnych piosenek: 

@@ -1,4 +1,4 @@
-#include <RotaryEncoder.h>
+-#include <RotaryEncoder.h>
 #include <Callback.h>
 #include "RotaryCounter.h"
 

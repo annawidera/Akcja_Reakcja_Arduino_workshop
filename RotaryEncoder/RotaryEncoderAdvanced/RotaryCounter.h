@@ -15,6 +15,7 @@ ISR(PCINT1_vect) {
   encoder.tick(); // just call tick() to check the state.
 }
 
+
 void checkEncoderHasNewValue(Signal<int> &encoderSignal) {
   
   static int pos = 0;
@@ -25,4 +26,3 @@ void checkEncoderHasNewValue(Signal<int> &encoderSignal) {
     encoderSignal.Emit(pos);
   } 
 }
-

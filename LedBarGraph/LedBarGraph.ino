@@ -4,14 +4,16 @@ const int ledPins[BARS_COUNT] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
 
 void setup() {
-Serial.begin(115200);
+  Serial.begin(115200);
   for (int i=0; i < BARS_COUNT; i++) {
     pinMode(ledPins[i], OUTPUT); 
   }
 }
 
+
 int stepCounter = 0; 
 bool condition = true;
+
 
 void loop() {
 
@@ -35,6 +37,42 @@ void loop() {
 // sequenceAnimation();
 }
 
+
+
+void turnOn(int index) {
+  digitalWrite(ledPins[index], HIGH); 
+}
+
+void turnOff(int index) {
+  digitalWrite(ledPins[index], LOW); 
+}
+
+
+
+void turnOnBars(int bars) {
+
+  turnOffAll();
+  int constainedBars = constrain(bars, 0, BARS_COUNT-1);
+  
+  for (int bar = 0; bar < constainedBars; bar++) {
+    
+    turnOn(bar);
+  }
+}
+
+
+void turnOffAll() {
+  
+  for (int bar = 0; bar < BARS_COUNT; bar++) {
+    
+    turnOff(bar);
+  }
+}
+
+
+
+
+
 void sequenceAnimation() {
 
    for (int thisPin = 0; thisPin < BARS_COUNT; thisPin++) {
@@ -45,12 +83,13 @@ void sequenceAnimation() {
   }
 }
 
+
 void radialAnimation() {
 
   int stepDelay = 100; 
   
   for (int i = 0; i < BARS_COUNT/2+1; i++) {
-
+    
     turnOn(i); 
     turnOn(BARS_COUNT-1-i);
     delay(stepDelay); 
@@ -59,11 +98,12 @@ void radialAnimation() {
   delay(2000); 
 
   for (int i = BARS_COUNT/2; i >= 0; i--) {
-
+    
     turnOff(i); 
     turnOff(BARS_COUNT-1-i);
     delay(stepDelay); 
   }
+  
   delay(1000);
 }
 
@@ -84,31 +124,4 @@ void radialAnimationStep(int stepIndex) {
 }
 
 
-void turnOnBars(int bars) {
-
-  turnOffAll();
-  int constainedBars = constrain(bars, 0, BARS_COUNT-1);
-  for (int bar = 0; bar < constainedBars; bar++) {
-    
-    turnOn(bar);
-  }
-}
-
-void turnOffAll() {
-  
-  for (int bar = 0; bar < BARS_COUNT; bar++) {
-    
-    turnOff(bar);
-  }
-}
-
-
-
-void turnOn(int index) {
-  digitalWrite(ledPins[index], HIGH); 
-}
-
-void turnOff(int index) {
-  digitalWrite(ledPins[index], LOW); 
-}
 

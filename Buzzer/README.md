@@ -4,16 +4,17 @@ Głośnik piezoelektryczny. Może być podłączony do pinu cyfrowego i dla stan
 
 ## Schemat podłączenia
 Na co zwrócić uwagę?
-- sygnał przycisku wchodzi na pin **~digital** (cyfrowy z ~, tzn. taki, który obsługuje PWM),
-- PWM (ang. *pulse with modulation*) omawiam przy okazji LED Bar'a i sterowania jasnością świecenia diod
+- buzzer jest sterowany przez pin **~digital** (cyfrowy z ~, tzn. taki, który obsługuje PWM),
+- PWM (ang. *pulse with modulation*) omawiam w części dotyczącej LED Bar'a i sterowania jasnością świecenia diod
 
 Wyprowadzenia na płytce głośniczka są od spodu opisane. 
+🔥🔥🔥 Uważajcie proszę przy podłączeniu zasilania (GND i VCC) - zamiana tych kabli powoduje usmażenie buzzera. 
 
 | Buzzer | Arduino |
 | ---: | :--- |
 | SIG | 9 *(lub inny pin ~digital)* |
 | NC | (ang. *not connected*), pozostaje niepodłączony |
-| VCC | VCC |
+| VCC | VCC (5V) |
 | GND | GND |
 
 ## Tablica piosenek
@@ -26,30 +27,28 @@ struct Song {
   int tempo; 
 };
 ```
-oraz przykładową tablicę z piosenkami (🏆 dla tego, kto odgadnie drugą piosenkę przed uruchomieniem kodu na Arduino! :))
+oraz przykładowe piosenki (🏆 dla tego, kto odgadnie drugą piosenkę przed uruchomieniem kodu na Arduino! :))
 ``` C++ 
-#define songsCount 3
-Song songs[songsCount] = { 
-  { 15, "ccggaagffeeddc ", { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4 }, 300}, 
-  { 20, "geefddceg geefddcec ", { 2, 2, 2, 2, 2, 2, 1, 1, 4, 1, 2, 2, 2, 2, 2, 2, 1, 1, 4, 4 }, 200 }, 
-  { 18, "cdefgabC Cbagfedc ", { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4 }, 300}
-}; 
+Song song1 = { 15, "ccggaagffeeddc ", { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4 }, 300}; 
+Song song2 = { 20, "geefddceg geefddcec ", { 2, 2, 2, 2, 2, 2, 1, 1, 4, 1, 2, 2, 2, 2, 2, 2, 1, 1, 4, 4 }, 200 };
+Song song3 = { 18, "cdefgabC Cbagfedc ", { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4 }, 300}; 
 ```
-## No to gramy!
-Piosenki odgrywa funkcja: 
-``` C++ 
-void playSong(int songIndex)
-```
-do której podajemy indeks w tablicy `Song songs[]`. 
 
-W przykładowym szkicu znajdziecie w głównej pętli programu zapętlony koncert ze wszystkich piosenek: 
+## No to gramy!
+Aktualnie odgrywana piosenka znajduje się w zmiennej: `Song currentSong` i jej początkowa wartość to `song3`. 
+W pętli `loop` odgrywane są kolejne nuty piosenki: 
 ``` C++ 
-int song = 0;
-void loop() {
-  playSong(song);
-  song++; 
-  if (song >= songsCount ) {
-    song = 0; 
-  }
+playNote(currentSong.notes[note], currentSong.beats[note] * currentSong.tempo);
+```
+
+Następnie potrzebne jest opóźnienie: `delay(currentSong.tempo/2);` zachowujące rytm piosenki (kolejne nuty nie zostaną odegrane zbyt szybko). 
+
+Na końcu pętli `loop` przechodzimy do kolejnej nuty piosenki, upewniając się jednocześnie, że piosenka się nie skończyła. Jeśli tak, to wracamy na początek: 
+``` C++ 
+note++; 
+
+if (note >= currentSong.length) {
+  note = 0; 
 }
 ```
+😎 Tu można pokusić się o eksperyment i spróbować odegrać piosenkę od końca do początku, zamiast zaczynać do pierwszej nuty.

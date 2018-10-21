@@ -7,41 +7,27 @@ struct Song {
   int tempo; 
 };
 
-#define songsCount 3
-Song songs[songsCount] = { 
-  { 15, "ccggaagffeeddc ", { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4 }, 300}, 
-  { 20, "geefddceg geefddcec ", { 2, 2, 2, 2, 2, 2, 1, 1, 4, 1, 2, 2, 2, 2, 2, 2, 1, 1, 4, 4 }, 200 }, 
-  { 18, "cdefgabC Cbagfedc ", { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4 }, 300}
-}; 
+Song song1 = { 15, "ccggaagffeeddc ", { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4 }, 300}; 
+Song song2 = { 20, "geefddceg geefddcec ", { 2, 2, 2, 2, 2, 2, 1, 1, 4, 1, 2, 2, 2, 2, 2, 2, 1, 1, 4, 4 }, 200 };
+Song song3 = { 18, "cdefgabC Cbagfedc ", { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4 }, 300};
+
 
 void setup() {
   pinMode(SPEAKER_PIN, OUTPUT);
 }
 
-
-int song = 0;
+int note = 0;
+Song currentSong = song3;
 
 void loop() {
 
-  playSong(song);
+  playNote(currentSong.notes[note], currentSong.beats[note] * currentSong.tempo);
+  delay(currentSong.tempo/2);
  
-  song++; 
+  note++; 
 
-  if (song >= songsCount ) {
-    song = 0; 
-  }
-}
-
-
-void playSong(int songIndex) {
-  
-  Song song = songs[songIndex];
-  int length = song.length; 
-  
-  for (int note = 0; note < length; note++ ) {
-    
-     playNote(song.notes[note], song.beats[note] * song.tempo);
-     delay(song.tempo/2);
+  if (note >= currentSong.length) {
+    note = 0; 
   }
 }
 

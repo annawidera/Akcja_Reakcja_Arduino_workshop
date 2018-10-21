@@ -1,7 +1,7 @@
-#define MUTE 15
-#define QUIETLY 40
-#define NOISLY 200
-#define SUPER_LOUDLY 400
+#define MUTE 10
+#define QUIETLY 50
+#define NOISLY 300
+#define SUPER_LOUDLY 600
 #define DELTA 3
 
 enum NoiseState {
@@ -12,10 +12,6 @@ enum NoiseState {
   brainInPieces
 };
 
-struct Noise {
-  int microphoneValue; 
-  NoiseState state; 
-};
 
 NoiseState noiseStateBasedOn(int value) {
 
@@ -35,68 +31,35 @@ NoiseState noiseStateBasedOn(int value) {
 void writeState(NoiseState state) {
   
   switch (state) {
-    case mute:  Serial.print("mute"); break;
-    case quietly:   Serial.print("quietly"); break;
-    case noisly:  Serial.print("noisly"); break;
-    case superLoudly:   Serial.print("superLoudly"); break;
-    case brainInPieces:   Serial.print("brainInPieces"); break;
+    case mute:  Serial.println("mute"); break;
+    case quietly:   Serial.println("quietly"); break;
+    case noisly:  Serial.println("noisly"); break;
+    case superLoudly:   Serial.println("superLoudly"); break;
+    case brainInPieces:   Serial.println("brainInPieces"); break;
   }
 }
 
 
-bool checkIfNoiseChanged(Signal<int> &noiseValueChangedEvent, int value) {
+void writeEqualizer(NoiseState state) {
+  
+  switch (state) {
+    case mute:  Serial.println("▓▓▓"); break;
+    case quietly:   Serial.println("▓▓▓▓▓▓▓▓▓"); break;
+    case noisly:  Serial.println("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓"); break;
+    case superLoudly:   Serial.println("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓"); break;
+    case brainInPieces:   Serial.println("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓"); break;
+  }
+}
+
+
+bool checkIfNoiseChanged(int value) {
 
   static int microphoneValue = 0;
 
   if (abs(value - microphoneValue) > DELTA) {
     
-      noiseValueChangedEvent.Emit(value);
       microphoneValue = value;
       return true;
   }
   return false;
 }
-
-
-bool checkIfNoiseStateChanged(Signal<Noise> &noiseStateChangedEvent, int value) {
-
-  static NoiseState noiseState = mute;
-  NoiseState newNoiseState = noiseStateBasedOn(value); 
-
-  if (newNoiseState != noiseState) {
-        
-      Noise noise = { value, newNoiseState };
-      noiseStateChangedEvent.Emit(noise);
-      noiseState = newNoiseState;
-      return true;
-  }
-  return false;
-}
-
-
-bool checkLoudestEver(Signal<int> &loudestEverSignal, int value) {
-  
-  static int loudestEver = 0;
-  
-  if (value > loudestEver) {
-    
-    loudestEverSignal.Emit(value);
-    loudestEver = value;
-    return true;
-  }
-  return false;
-}
-
-
-
-bool checkScreaming(Signal<int> &screamEvent, int value) {
-  
-  NoiseState noiseState = noiseStateBasedOn(value); 
-
-  if (noiseState >= superLoudly) {
-    screamEvent.Emit(value);
-    return true;
-  }
-  return false;
-}
-

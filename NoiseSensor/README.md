@@ -3,70 +3,79 @@
 
 ## Schemat podłączenia
 Na co zwrócić uwagę?
-- sygnał przycisku wchodzi na pin **analogowy** (w przykładowym kodzie: A1), 
+- sygnał `ENVELOPE` wchodzi na pin **analogowy** (w przykładowym kodzie: A1), 
 - kabelki można wpiąć bezpośrednio do slotów na Arduino
 
 Sound Detector | Arduino
 ---: | :---
-VCC | VCC
+VCC | VCC (5V)
 GND | GND
 ENVELOPE | pin analogowy (w przykładowym kodzie: A1)
 pozostałe | niepodłączone
 
-[![Schemat-podlaczenia](https://cdn.sparkfun.com/assets/learn_tutorials/4/9/2/Exp_16_Sound_Detector_bb_2.png)](https://learn.sparkfun.com/tutorials/sik-experiment-guide-for-the-arduino-101genuino-101-board/experiment-15-using-the-sound-detector-board)
+![Schemat-podlaczenia](http://www.awidera.idl.pl/ArduinoDIYworkshopimages/sound_detector.png)
 
 [Kompletny hook-up-guide na stronie Sparkfun](https://learn.sparkfun.com/tutorials/sound-detector-hookup-guide)
 
 ## Obsłużone zdarzenia
-Mikrofon zbiera dźwięki z otoczenia, które przetwarza układ na płytce "Sound detectora" i udostępnia Arduino. Arduino w głównej pętli programu odczytuje ten sygnał na pinie analogowym (stąd wartości są z zakresu 0...1024) i w odpowiedzi na niego uruchamia poniższe zdarzenia. 
+Mikrofon zbiera dźwięki z otoczenia, które przetwarza układ na płytce "Sound detectora" i udostępnia Arduino. Arduino w głównej pętli programu odczytuje ten sygnał na pinie analogowym (stąd wartości są z zakresu 0...1024).
 **Uwaga**: odczytywane wartości nie są wyrażone w decybelach. Odpowiadają zmianom napięcia w zakresie 0...5V. Można je porównywać ze sobą uznając, że np. 100 to znacznie ciszej niż 1000. 
 #### Zmiana natężenia dźwięków otoczenia
-Jeśli natężenie dźwięków zmieniło się od ostatniego pomiaru o wartość większą niż ustalona ```DELTA``` wywoływane jest zdarzenie (z aktualną wartością natężenia dźwięku):
+Wartości odczytywane z czujnika mogą nieco fluktuować (zmieniać się np. +/- 1), bez specjalnej zmiany głośności otoczenia. Żeby odfiltrować takie nieznaczne zmiany, możemy skorzystać z funkcji: 
 ``` C++
-void noiseValueHandler(int value)
+  if ( checkIfNoiseChanged(microphoneValue) == true ) {
+    ...
+  }
 ```
-Wartość delty można zmienić w pliku `NoiseState.h`, podmieniając wartość `3` w tej linijce: 
-` #define DELTA 3`
+Domyślnie zmiany o +/-3 będą ignorowane. Wartość 3 jest zdefiniowana jako `DELTA` w pliku `NoiseState.h`: 
+
+`#define DELTA 3`. 
+czułość | `DELTA`
+---: | :---
+⬆️  | ⬇️
+⬇️ | ⬆️ 
+
 #### Zmiana poziomu hałasu
+_dalej jesteśmy w pliku `NoiseState.h`_
+
 Ustaliłam 5 progów dźwięku określonych jako `NoiseState`. Zmienna tego typu może mieć następujące wartości: `mute`, `quietly`, `noisly`, `superLoudly`, `brainInPieces`. 
 W pliku `NoiseState.h` są zdefiniowane konkretne wartości progów. To są wartości przykładowe, warto je dopasować do panującego na miejscu natężenia dźwięków. 
 ``` C++
-#define MUTE 15
-#define QUIETLY 40
-#define NOISLY 200
-#define SUPER_LOUDLY 400
+#define MUTE 10
+#define QUIETLY 50
+#define NOISLY 300
+#define SUPER_LOUDLY 600
 ```
-Jeśli z wartości określającej aktualne natężenie dźwięku wynika inny niż poprzednio próg hałasu, wywoływane jest zdarzenie: 
-``` C++ 
-void noiseStateValueHandler(Noise noise) {
-  Serial.print("state "); writeState(noise.state); 
-  Serial.print("   value: "); Serial.println(noise.microphoneValue);
+
+Dla Waszej wygody jest dostępna funkcja: 
+``` C++
+NoiseState noiseStateBasedOn(int value) {
+
+  if (value > SUPER_LOUDLY ) {
+    return brainInPieces;
+  } else if (value > NOISLY) {
+    return superLoudly;
+  } else if (value > QUIETLY) {
+    return noisly;
+  } else if (value > MUTE) {
+    return quietly;
+  }
+  return mute;
 }
 ```
-#### Detekcja krzyku
-Kiedy poziom hałasu osiągnie bądź przekroczy próg `superLoudly`, odpala się zdarzenie: 
-``` C++ 
-void screamHandler(int value) {
-  Serial.println("SCREEEEAAAAAAAM");
-}
+która porównuje wartość przekazaną do funkcji (wartość odczytana z czujnika), z podanymi programi i zwraca aktualny poziom hałasu (`NoiseState`).
+
+Otrzymany `NoiseState` możecie na początek wypisać na Serial Monitorze. Są do tego dwie funkcje. Pierwsza wypisuje nazwę stanu, druga rysuje coś w rodzaju obróconego o 90* equalizera. 
+``` C++
+void writeState(NoiseState state)
 ```
-**Uwaga**: Ta funkcja wywoływana jest tak długo, jak długo nie ustanie krzyk (bardzo głośny dźwięk), a nie tylko jednorazowo przy zmianie. 
-#### Detekcja najgłośniejszego dźwięku (dotąd)
-Program cały czas zapamiętuje nagłośniejszy (jak dotąd) zasłyszany dźwięk. Jeśli jakiś hałas go przebije, uruchamia zdarzenie (aktualizując jednocześnie wartość): 
-``` C++ 
-void loudestEverHandler(int value) 
+``` C++
+void writeEqualizer(NoiseState state) 
 ```
-Po jakimś czasie nie tak łatwo wywołać to zdarzenie... 😎
+
 #### Szkic, aby działać potrzebuje
 Cały szkic do obsługi mikrofonu wymaga: 
 - pliku `NoiseState.h` (w tym samym katalogu co szkic `NoiseSensor.ino`), 
-- zainstalowanej biblioteki
-  * `Callback`
-Biblioteka jest dostępna przez Menedżera bibliotek środowiska Arduino IDE (patrz na końcu dokumentu)
-
-
-##### Menedżer bibliotek
-Menedżer bibliotek dostępny w środowisku Arduino IDE przez menu `Szkic` → `Dołącz bibliotekę` → `Zarządzaj bibliotekami...`.
 
 ##### Linki
 [producent - sparkfun - strona produktu](https://www.sparkfun.com/products/12642)

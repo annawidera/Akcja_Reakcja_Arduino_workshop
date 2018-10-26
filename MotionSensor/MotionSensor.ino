@@ -1,11 +1,28 @@
-#include <Callback.h>
-
 #define MOTION_SENSOR_PIN 2
+ 
+void setup() {
+
+  pinMode(MOTION_SENSOR_PIN, INPUT);
+  Serial.begin(115200);
+}
 
 
-Signal<bool> isMotionSignal;
+bool currentMotionStatus = false; 
 
-void isMotionHandler(bool isMotion) {
+void loop(){
+
+  static bool isMotion = false;
+
+  currentMotionStatus = digitalRead(MOTION_SENSOR_PIN);
+
+  if (currentMotionStatus != isMotion) {
+      motionStatusChanged(currentMotionStatus);
+      isMotion = currentMotionStatus; 
+  }
+}
+
+
+void motionStatusChanged(bool isMotion) { 
 
   switch (isMotion) {
     case true: Serial.println("Motion detected"); break; 
@@ -13,25 +30,3 @@ void isMotionHandler(bool isMotion) {
   }
 }
 
-
-FunctionSlot<bool> isMotionFuncSlot(isMotionHandler); 
- 
-void setup() {
-
-  pinMode(MOTION_SENSOR_PIN, INPUT);
-  isMotionSignal.Connect(isMotionFuncSlot); 
-  Serial.begin(115200);
-}
-
- 
-void loop(){
-
-  static bool isMotion = false;
-
-  bool checkMotion = digitalRead(MOTION_SENSOR_PIN);
-
-  if (checkMotion != isMotion) {
-      isMotionSignal.Emit(checkMotion); 
-      isMotion = checkMotion; 
-  }
-}

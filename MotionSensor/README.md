@@ -6,13 +6,13 @@
 ## Schemat podłączenia
 Na co zwrócić uwagę?
 - czujnik korzysta z pinu **cyfrowego** (w przykładowym kodzie: 2)
-- wyjścia z płytki z czujnikiem powinny być podpisane (kolejnoś wyprowadzeń może się różnić między czujnikami róznych producentów)
+- wyjścia z płytki z czujnikiem powinny być podpisane (kolejność wyprowadzeń może się różnić między czujnikami różnych producentów)
 
 PIR | Arduino
 ---: | :---
-VCC | VCC
-OUT | 2 *(lub inny pin cyfrowy)*
-GND | GND
+`VCC` | `VCC`
+`OUT` | **2** (lub inny pin **cyfrowy**)
+`GND` | `GND`
 
 
 ## Obsłużone zdarzenia
@@ -25,17 +25,12 @@ Drugi potencjometr (Sx) służy do regulacji czułości.
 
 Przy każdej zmianie stanu (wykryto ruch / brak ruchu) wywoływana jest funkcja z parametrem `isMotion`, który przyjmuje wartości odpowiednio `true` i `false`:
 ``` C++ 
-void isMotionHandler(bool isMotion) {
+void motionStatusChanged(bool isMotion) {
   switch (isMotion) {
     case true: Serial.println("Motion detected"); break; 
     case false: Serial.println("Motion disappeared"); break;
   }
 }
 ```
-
-#### Szkic, aby działać potrzebuje
-Cały szkic do obsługi Siła-Rezystora wymaga zainstalowanej biblioteki `Callback` dostępnej w Menedżerze bibliotek środowiska Arduino IDE (patrz na końcu dokumentu)
-
-##### Menedżer bibliotek
-Menedżer bibliotek dostępny w środowisku Arduino IDE przez menu `Szkic` → `Dołącz bibliotekę` → `Zarządzaj bibliotekami...`.
-
+Można też przechwytywać i obsługiwać na bieżąco aktualny stan ruchu, wtedy trzeba usunąć filtrowanie:
+`if (currentMotionStatus != isMotion)`. 

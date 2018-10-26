@@ -2,14 +2,15 @@
 ![Obrazek](http://www.hobbytronics.co.uk/image/cache/data/misc/led-bargraph-10-500x500.jpg)
 
 
-## Schemat podłączenia
+## 🔌 Schemat podłączenia
 Na co zwrócić uwagę?
 - od strony napisu na obudowie idą kabelki do Arduino 😉
 - sygnały sterujące z Arduino wychodzą z pinów **digital** (cyfrowych), 
+- użyte rezystory to **220Ω**, 
 - piny **0** i **1** są wykorzystywane do komunikacji Arduino z komputerem (`Serial.print("Hello");`) i wykorzystanie ich do świecenia diodami uniemożliwia komunikację.
 ![Schemat-podlaczenia](http://awidera.idl.pl/schema_bb.png)
 
-## Obsługa
+## 🖐️ Obsługa
 ### Konfiguracja pinów Arduino
 Piny Arduino, które będą sterowały świeceniem diod muszą być ustawione jako wyjścia. 
 Na górze pliku zadeklarowana jest tablica, w której należy uzupełnić numery pinów z podłączonymi diodami: 
@@ -45,7 +46,7 @@ Aby następnie zgasić wybraną diodę, analogicznie:
 turnOff(6);
 ```
 
-#### Animacje
+#### 🎬 Animacje
 Włączając i wyłączając diody w odpowiednich sekwencjach można uzyskać efekt animacji. Przykładowe animacje można zobaczyć, wywołując funkcje: 
 ``` C++ 
 radialAnimation();
@@ -63,13 +64,16 @@ Można jej użyć np. w taki sposób
       radialAnimationStep(stepCounter);
     
       stepCounter++; 
-      if (stepCounter > 11) {
+      if (stepCounter > _liczba_klatek_animacji) {
         stepCounter = 0;
       }
   }
 ```
-gdzie `_tu_jakis_warunek_` to może być sprawdzenie czy przycisk jest wciśnięty, czy ktoś cały czas krzyczy (Sound detector) albo czy wciąż temperatura jest przekroczona. 
+gdzie:
+- `_tu_jakis_warunek_` to może być sprawdzenie czy przycisk jest wciśnięty, czy ktoś cały czas krzyczy (Sound detector) albo czy wciąż temperatura jest przekroczona. 
 Animacja będzie się odtwarzała płynnie (kolejne klatki animacji) tak długo, jak długo spełniony będzie `_tu_jakis_warunek_`. Jeśli przestanie być prawdziwy - animacja ustanie. 
+
+- `stepCounter` nie powinien przekroczyć `_liczba_klatek_animacji`, ale to zależy od przygotowanej sekwencji. :) 
 
 ## 💡 Sterowanie jasnością świecenia
 Przekopując się prez przygotowane przeze mnie funkcje dotrzecie w końcu do sedna, czyli do wywołania funkcji, która faktycznie zaświeca diodę (tu: podpiętą na pinie cyfrowym 5): 
@@ -91,5 +95,5 @@ LOW | 0
 -| 1...254
 HIGH | 255
 
-###### Stopniowana moc świecenia diody bardzo fajnie łączy się z wszelkiego rodzaju potencjometrami, rezystorami wrażliwym na nacisk itp. 
+##### Stopniowana moc świecenia diody bardzo fajnie łączy się z wszelkiego rodzaju potencjometrami, rezystorami wrażliwym na nacisk itp. 
 

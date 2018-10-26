@@ -4,6 +4,7 @@ const int ledPins[BARS_COUNT] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
 
 void setup() {
+  
   Serial.begin(115200);
   for (int i=0; i < BARS_COUNT; i++) {
     pinMode(ledPins[i], OUTPUT); 
@@ -17,24 +18,24 @@ bool condition = true;
 
 void loop() {
 
-  long int timeCondition = millis(); 
-  long int maxTime = 20000;
-  int bars = map(timeCondition, 0, maxTime, 0, BARS_COUNT);
-  turnOnBars(bars);
+   radialAnimation();
+//   sequenceAnimation();
+
+//  long int timeCondition = millis(); 
+//  long int maxTime = 10000;
+//  int bars = map(timeCondition, 0, maxTime, 0, BARS_COUNT);
+//  turnOnBars(bars);
   
 //  if (condition) {
 //    
 //      radialAnimationStep(stepCounter);
 //    
 //      stepCounter++; 
-//      if (stepCounter > 11) {
+//      if (stepCounter > 9) {
 //        stepCounter = 0;
 //      }
-//      delay(500);
+//      delay(300);
 //  }
-
-// radialAnimation();
-// sequenceAnimation();
 }
 
 
@@ -52,9 +53,9 @@ void turnOff(int index) {
 void turnOnBars(int bars) {
 
   turnOffAll();
-  int constainedBars = constrain(bars, 0, BARS_COUNT-1);
+  int constrainedBars = constrain(bars, 0, BARS_COUNT);
   
-  for (int bar = 0; bar < constainedBars; bar++) {
+  for (int bar = 0; bar < constrainedBars; bar++) {
     
     turnOn(bar);
   }
@@ -109,17 +110,16 @@ void radialAnimation() {
 
 
 void radialAnimationStep(int stepIndex) {
-  
-  if (stepIndex <= 5) {
+
+  if (stepIndex <= 4) {
 
     turnOn(stepIndex); 
     turnOn(BARS_COUNT-1-stepIndex);
     
-  } else if (stepIndex <= 11) {
+  } else if (stepIndex <= 9) { 
     
-    int segmentIndex = map(stepIndex, 6, 11, 5, 0);
-    turnOff(segmentIndex); 
-    turnOff(BARS_COUNT-1-segmentIndex);
+    turnOff(BARS_COUNT-(stepIndex+1)); 
+    turnOff(stepIndex);
   }
 }
 

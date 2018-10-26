@@ -1,37 +1,35 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-#define servosCount 1
-const int servosId[servosCount] = { 0 };
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVOMIN  150 // this is the 'minimum' pulse length count (out of 4096)
 #define SERVOMAX  600 // this is the 'maximum' pulse length count (out of 4096)
 
-int quater = (SERVOMAX - SERVOMIN)*0.25;
-int low = SERVOMIN + quater;
-int middle = SERVOMIN + 2*quater;
-int high = SERVOMAX - quater;
 
 void setup() {
 
   pwm.begin();
-  pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+  pwm.setPWMFreq(60);
 
   Serial.begin(115200);
 }
 
 
+int servoId = 0;
+
 void loop() {
-
-  int servoId = 0;
-
-  for (int i = 0; i <= 180; i += 180/10) {
-    Serial.print("go to "); Serial.println(i);
-    setServoPosition(servoId, i); 
-    delay(1000);
-  }
+  
+  Serial.println("go to 0*");
+  setServoPosition(servoId, 0); 
+  delay(1500);
+  
+  Serial.println("go to 180*");
+  setServoPosition(servoId, 180); 
+  delay(1500);
 }
+
+
 
 void setServoPosition(int servoNmb, int angle) {
 
@@ -40,4 +38,3 @@ void setServoPosition(int servoNmb, int angle) {
   pwm.setPWM(servoNmb, 0, pulseLenght); 
   
 }
-
